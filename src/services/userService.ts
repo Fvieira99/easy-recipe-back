@@ -1,14 +1,14 @@
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { userRepository } from "../repositories/userRepository.js";
-import { conflictError, notFoundError } from "../utils/errorUtil.js";
+import { conflictError, unauthorizedError } from "../utils/errorUtil.js";
 
 dotenv.config();
 
 export type CreateUserData = Omit<User, "id" | "createAt">;
-export type LoginUserData = Omit<CreateUserData, "username">;
+export type LoginUserData = Omit<CreateUserData, "username" | "avatar">;
 
 async function signup(data: CreateUserData) {
 	const existingUser = await userRepository.findByEmailOrUsername(
@@ -19,22 +19,25 @@ async function signup(data: CreateUserData) {
 		throw conflictError("User already exists!");
 	}
 
-	const newUser = { ...data, password: encryptPW(data.password) };
+	const newUser = { ...data, password: encryptPassword(data.password) };
 
 	await userRepository.create(newUser);
 }
 
 async function signin(data: LoginUserData) {
 	const existingUser = await userRepository.findByEmail(data.email);
-	if (!existingUser) {
-		throw notFoundError("User not found!");
+	if (
+		!existingUser ||
+		!isCorrectPassword(data.password, existingUser.password)
+	) {
+		throw unauthorizedError("Invalid credentials!");
 	}
 	const token = generateToken(existingUser.id);
-	console.log(token);
+
 	return token;
 }
 
-function encryptPW(password: string) {
+function encryptPassword(password: string) {
 	const SALT = 10;
 	return bcrypt.hashSync(password, SALT);
 }
@@ -47,7 +50,12 @@ function generateToken(id: number) {
 	return jwt.sign(JWT_DATA, JWT_KEY, JWT_CONFIG);
 }
 
+function isCorrectPassword(inputPassword: string, userPassword: string) {
+	return bcrypt.compareSync(inputPassword, userPassword);
+}
+
 export const userService = {
 	signup,
 	signin,
+	encryptPassword,
 };
