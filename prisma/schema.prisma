@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
@@ -16,26 +17,26 @@ model User {
   email    String    @unique
   password String
   avatar String
-  createAt DateTime  @default(now()) @db.Timestamptz() 
-  Recipe   Recipe[]
+  createdAt DateTime  @default(now()) @db.Timestamptz() 
+  recipes   Recipe[]
   SavedRecipe SavedRecipe[]
-  Comment  Comment[]
+  ratings      Rating[]
 
   @@map("users")
 }
 
 model Recipe {
   id           Int       @id @default(autoincrement())
-  title        String    @unique
+  title        String    
   mealFor      Int
   time         Int
   howToPrepare String
-  createAt     DateTime  @db.Timestamptz()
+  createdAt     DateTime  @default(now()) @db.Timestamptz() 
   userId       Int
   user         User      @relation(fields: [userId], references: [id])
   ingredients  String[]
-  SavedRecipe SavedRecipe[]
-  Comment      Comment[]
+  SavedRecipes SavedRecipe[]
+  ratings     Rating[]
 
   @@map("recipes")
 }
@@ -46,17 +47,19 @@ model SavedRecipe {
   recipe   Recipe @relation(fields: [recipeId], references: [id])
   userId   Int
   user     User   @relation(fields: [userId], references: [id])
-
+  createdAt DateTime  @default(now()) @db.Timestamptz()
   @@map("saved_recipes")
 }
 
-model Comment {
+model Rating {
   id       Int    @id @default(autoincrement())
   recipeId Int
   recipe   Recipe @relation(fields: [recipeId], references: [id])
   userId   Int
   user     User   @relation(fields: [userId], references: [id])
   rating Int
+  comment String @db.VarChar(255)
+  createdAt DateTime  @default(now()) @db.Timestamptz() 
   
-  @@map("comments")
+  @@map("ratings")
 }
