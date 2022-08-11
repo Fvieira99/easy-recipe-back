@@ -1,6 +1,9 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../database/database.js";
-import { CreateRecipeData } from "../services/recipeService.js";
+import {
+	CreateRecipeData,
+	CreateRecipe_ingredientData,
+} from "../services/recipeService.js";
 
 async function getRecipeById(recipeId: number) {
 	return await prisma.recipe.findFirst({
@@ -63,8 +66,14 @@ async function getRecipeByTitleAndUserId(title: string, userId: number) {
 	});
 }
 
-async function create(data: CreateRecipeData) {
-	await prisma.recipe.create({ data });
+async function createRecipe(data: CreateRecipeData) {
+	return await prisma.recipe.create({ data });
+}
+
+async function createManyRecipe_Ingredient(
+	data: CreateRecipe_ingredientData[]
+) {
+	await prisma.recipe_Ingredient.createMany({ data });
 }
 
 async function getRecipesByTitle(title: string) {
@@ -83,11 +92,12 @@ async function getRecipesQty() {
 }
 
 export const recipeRepository = {
-	create,
+	createRecipe,
 	getRecipes,
 	getUserRecipes,
 	getRecipeById,
 	getRecipeByTitleAndUserId,
 	getRecipesByTitle,
 	getRecipesQty,
+	createManyRecipe_Ingredient,
 };

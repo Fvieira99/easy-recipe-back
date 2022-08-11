@@ -6,7 +6,7 @@ import recipeSchema from "../schemas/recipeSchema.js";
 
 const recipeRouter = Router();
 
-// recipeRouter.use(validateToken);
+recipeRouter.use(validateToken);
 
 recipeRouter.post(
 	"/recipes",

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { RecipeSchemaData } from "../schemas/recipeSchema.js";
 import { InputRecipeData, recipeService } from "../services/recipeService.js";
 
 async function getRecipes(req: Request, res: Response) {
@@ -15,9 +16,31 @@ async function getRecipesQty(req: Request, res: Response) {
 }
 
 async function create(req: Request, res: Response) {
-	const data: InputRecipeData = req.body;
+	const {
+		title,
+		howToPrepare,
+		image,
+		mealFor,
+		time,
+		ingredients,
+	}: RecipeSchemaData = req.body;
+
 	const { userId }: { userId: number } = res.locals.user;
-	await recipeService.create(data, userId);
+
+	const recipeData = {
+		title,
+		howToPrepare,
+		image,
+		mealFor: Number(mealFor),
+		time: Number(time),
+	};
+	const createdRecipe = await recipeService.createRecipe(recipeData, userId);
+
+	await recipeService.createManyRecipe_Ingredient(
+		createdRecipe.id,
+		ingredients
+	);
+
 	res.sendStatus(201);
 }
 

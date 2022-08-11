@@ -1,9 +1,17 @@
+import { Recipe_Ingredient } from "@prisma/client";
 import { Recipe } from "@prisma/client";
 import { recipeRepository } from "../repositories/recipeRepository.js";
 import { conflictError } from "../utils/errorUtil.js";
 
 export type InputRecipeData = Omit<CreateRecipeData, "userId">;
 export type CreateRecipeData = Omit<Recipe, "id" | "createdAt">;
+
+export type CreateRecipe_ingredientData = Omit<Recipe_Ingredient, "id">;
+export type InputRecipe_IngredientData = Omit<
+	CreateRecipe_ingredientData,
+	"recipeId"
+>;
+
 interface RecipesWithoutAvgRating {
 	ratings: { rating: number }[];
 	id: number;
@@ -24,7 +32,7 @@ interface RecipesWithAvgRating {
 	};
 }
 
-async function create(data: InputRecipeData, userId: number) {
+async function createRecipe(data: InputRecipeData, userId: number) {
 	const existingRecipe = await recipeRepository.getRecipeByTitleAndUserId(
 		data.title,
 		userId
@@ -36,7 +44,7 @@ async function create(data: InputRecipeData, userId: number) {
 		...data,
 		userId,
 	};
-	await recipeRepository.create(recipe);
+	return await recipeRepository.createRecipe(recipe);
 }
 
 async function getRecipes(pageNumber: number) {
@@ -72,6 +80,20 @@ async function getRecipesQty() {
 	return quantity;
 }
 
+async function createManyRecipe_Ingredient(
+	recipeId: number,
+	ingredients: InputRecipe_IngredientData[]
+) {
+	const ingredientsWithRecipeId = ingredients.map((ingredient) => {
+		return {
+			...ingredient,
+			recipeId,
+		};
+	});
+
+	await recipeRepository.createManyRecipe_Ingredient(ingredientsWithRecipeId);
+}
+
 function calculateRatingAVG(
 	recipe: RecipesWithoutAvgRating
 ): RecipesWithAvgRating {
@@ -85,10 +107,11 @@ function calculateRatingAVG(
 }
 
 export const recipeService = {
-	create,
+	createRecipe,
 	getRecipes,
 	getUserRecipes,
 	getRecipeById,
 	getRecipesByTitle,
 	getRecipesQty,
+	createManyRecipe_Ingredient,
 };
