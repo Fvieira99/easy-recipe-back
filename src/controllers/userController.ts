@@ -13,8 +13,8 @@ async function signup(req: Request, res: Response) {
 
 async function signin(req: Request, res: Response) {
 	const data: LoginUserData = req.body;
-	const token = await userService.signin(data);
-	res.status(200).send({ token });
+	const user = await userService.signin(data);
+	res.status(200).send(user);
 }
 
 export const userController = {

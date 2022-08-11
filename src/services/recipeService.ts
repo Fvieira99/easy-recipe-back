@@ -1,4 +1,4 @@
-import { Rating, Recipe } from "@prisma/client";
+import { Recipe } from "@prisma/client";
 import { recipeRepository } from "../repositories/recipeRepository.js";
 import { conflictError } from "../utils/errorUtil.js";
 
@@ -40,7 +40,7 @@ async function create(data: InputRecipeData, userId: number) {
 }
 
 async function getRecipes(pageNumber: number) {
-	const skip = 10 * pageNumber;
+	const skip = 10 * (pageNumber - 1);
 	const recipes = await recipeRepository.getRecipes(skip);
 	const recipesWithAvgRating = recipes.map((recipe) => {
 		return calculateRatingAVG(recipe);
@@ -62,6 +62,16 @@ async function getRecipeById(recipeId: number) {
 	return recipeWithAvgRating;
 }
 
+async function getRecipesByTitle(title: string) {
+	const recipes = await recipeRepository.getRecipesByTitle(title);
+	return recipes;
+}
+
+async function getRecipesQty() {
+	const quantity = await recipeRepository.getRecipesQty();
+	return quantity;
+}
+
 function calculateRatingAVG(
 	recipe: RecipesWithoutAvgRating
 ): RecipesWithAvgRating {
@@ -79,4 +89,6 @@ export const recipeService = {
 	getRecipes,
 	getUserRecipes,
 	getRecipeById,
+	getRecipesByTitle,
+	getRecipesQty,
 };

@@ -12,6 +12,7 @@ async function getRecipeById(recipeId: number) {
 			ratings: {
 				select: { rating: true },
 			},
+			title: true,
 		},
 		where: {
 			id: recipeId,
@@ -29,6 +30,7 @@ async function getRecipes(skip: number) {
 			ratings: {
 				select: { rating: true },
 			},
+			title: true,
 		},
 		skip,
 		take: 10,
@@ -46,6 +48,7 @@ async function getUserRecipes(userId: number) {
 			ratings: {
 				select: { rating: true },
 			},
+			title: true,
 		},
 		orderBy: { createdAt: "desc" },
 		where: {
@@ -64,10 +67,27 @@ async function create(data: CreateRecipeData) {
 	await prisma.recipe.create({ data });
 }
 
+async function getRecipesByTitle(title: string) {
+	return await prisma.recipe.findMany({
+		where: {
+			title: {
+				startsWith: title,
+				mode: "insensitive",
+			},
+		},
+	});
+}
+
+async function getRecipesQty() {
+	return await prisma.recipe.count();
+}
+
 export const recipeRepository = {
 	create,
 	getRecipes,
 	getUserRecipes,
 	getRecipeById,
 	getRecipeByTitleAndUserId,
+	getRecipesByTitle,
+	getRecipesQty,
 };

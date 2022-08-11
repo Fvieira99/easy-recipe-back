@@ -34,7 +34,12 @@ async function signin(data: LoginUserData) {
 	}
 	const token = generateToken(existingUser.id);
 
-	return token;
+	return {
+		token,
+		userId: existingUser.id,
+		username: existingUser.username,
+		avatar: existingUser.avatar,
+	};
 }
 
 function encryptPassword(password: string) {

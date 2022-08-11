@@ -3,9 +3,15 @@ import { InputRecipeData, recipeService } from "../services/recipeService.js";
 
 async function getRecipes(req: Request, res: Response) {
 	const pageNumber: number = Number(req.query.page);
+
 	const recipes = await recipeService.getRecipes(pageNumber);
-	console.log(recipes);
+
 	res.send(recipes);
+}
+
+async function getRecipesQty(req: Request, res: Response) {
+	const quantity = await recipeService.getRecipesQty();
+	res.send({ quantity });
 }
 
 async function create(req: Request, res: Response) {
@@ -27,9 +33,17 @@ async function getRecipeById(req: Request, res: Response) {
 	res.send(recipe);
 }
 
+async function getRecipesByTitle(req: Request, res: Response) {
+	const title: string = req.query.name.toString();
+	const recipes = await recipeService.getRecipesByTitle(title);
+	res.send(recipes);
+}
+
 export const recipeController = {
 	create,
 	getRecipes,
 	getUserRecipes,
 	getRecipeById,
+	getRecipesQty,
+	getRecipesByTitle,
 };

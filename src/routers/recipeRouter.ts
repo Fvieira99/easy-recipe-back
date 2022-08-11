@@ -6,7 +6,7 @@ import recipeSchema from "../schemas/recipeSchema.js";
 
 const recipeRouter = Router();
 
-recipeRouter.use(validateToken);
+// recipeRouter.use(validateToken);
 
 recipeRouter.post(
 	"/recipes",
@@ -19,5 +19,7 @@ recipeRouter.get(
 	recipeController.getUserRecipes
 );
 recipeRouter.get("/recipes/recipe/:recipeId", recipeController.getRecipeById);
+recipeRouter.get("/recipes/search", recipeController.getRecipesByTitle);
+recipeRouter.get("/recipes/quantity", recipeController.getRecipesQty);
 
 export default recipeRouter;
