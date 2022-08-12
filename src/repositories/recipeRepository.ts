@@ -16,6 +16,19 @@ async function getRecipeById(recipeId: number) {
 				select: { rating: true },
 			},
 			title: true,
+			image: true,
+			howToPrepare: true,
+			mealFor: true,
+			time: true,
+			recipe_ingredient: {
+				select: {
+					ingredientQty: true,
+					ingredient: true,
+				},
+				where: {
+					recipeId: recipeId,
+				},
+			},
 		},
 		where: {
 			id: recipeId,
@@ -34,6 +47,7 @@ async function getRecipes(skip: number) {
 				select: { rating: true },
 			},
 			title: true,
+			image: true,
 		},
 		skip,
 		take: 10,

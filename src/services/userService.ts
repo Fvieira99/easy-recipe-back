@@ -50,9 +50,8 @@ function encryptPassword(password: string) {
 function generateToken(id: number) {
 	const JWT_DATA = { userId: id };
 	const JWT_KEY = process.env.JWT_SECRET;
-	const JWT_CONFIG = { expiresIn: 60 * 60 };
 
-	return jwt.sign(JWT_DATA, JWT_KEY, JWT_CONFIG);
+	return jwt.sign(JWT_DATA, JWT_KEY);
 }
 
 function isCorrectPassword(inputPassword: string, userPassword: string) {

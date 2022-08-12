@@ -23,7 +23,7 @@ interface RecipesWithoutAvgRating {
 }
 
 interface RecipesWithAvgRating {
-	ratings: number;
+	ratings: { ratingAVG: number; ratingsCount: number };
 	id: number;
 	user: {
 		id: number;
@@ -102,7 +102,7 @@ function calculateRatingAVG(
 	const AVG = ratingsCount === 0 ? 0 : ratingsTotal / ratingsCount;
 	return {
 		...recipe,
-		ratings: AVG,
+		ratings: { ratingAVG: AVG, ratingsCount: ratingsCount },
 	};
 }
 
