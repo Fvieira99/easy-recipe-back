@@ -14,10 +14,7 @@ recipeRouter.post(
 	recipeController.create
 );
 recipeRouter.get("/recipes", recipeController.getRecipes);
-recipeRouter.get(
-	"/recipes/user-recipes/:userId",
-	recipeController.getUserRecipes
-);
+recipeRouter.get("/profile/recipes", recipeController.getUserRecipes);
 recipeRouter.get("/recipes/recipe/:recipeId", recipeController.getRecipeById);
 recipeRouter.get("/recipes/search", recipeController.getRecipesByTitle);
 recipeRouter.get("/recipes/quantity", recipeController.getRecipesQty);

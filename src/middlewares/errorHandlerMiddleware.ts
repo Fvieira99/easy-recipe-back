@@ -6,6 +6,7 @@ const typeToStatusCode = {
 	not_found: 404,
 	unauthorized: 401,
 	wrong_schema: 422,
+	bad_request: 400,
 };
 
 export function errorHandler(

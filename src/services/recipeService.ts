@@ -1,7 +1,8 @@
 import { Recipe_Ingredient } from "@prisma/client";
 import { Recipe } from "@prisma/client";
+import { ratingRepository } from "../repositories/ratingRepository.js";
 import { recipeRepository } from "../repositories/recipeRepository.js";
-import { conflictError } from "../utils/errorUtil.js";
+import { conflictError, notFoundError } from "../utils/errorUtil.js";
 
 export type InputRecipeData = Omit<CreateRecipeData, "userId">;
 export type CreateRecipeData = Omit<Recipe, "id" | "createdAt">;
@@ -13,7 +14,9 @@ export type InputRecipe_IngredientData = Omit<
 >;
 
 interface RecipesWithoutAvgRating {
-	ratings: { rating: number }[];
+	ratings: {
+		rating: number;
+	}[];
 	id: number;
 	user: {
 		id: number;
@@ -66,8 +69,18 @@ async function getUserRecipes(userId: number) {
 
 async function getRecipeById(recipeId: number) {
 	const recipe = await recipeRepository.getRecipeById(recipeId);
+
+	if (!recipe) {
+		throw notFoundError("Recipe does not exist");
+	}
+
+	const recipeRatings = await ratingRepository.getRatingsByRecipeId(recipeId);
+
 	const recipeWithAvgRating = calculateRatingAVG(recipe);
-	return recipeWithAvgRating;
+	return {
+		...recipeWithAvgRating,
+		ratings: { ...recipeWithAvgRating.ratings, recipeRatings },
+	};
 }
 
 async function getRecipesByTitle(title: string) {

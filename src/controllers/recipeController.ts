@@ -45,7 +45,7 @@ async function create(req: Request, res: Response) {
 }
 
 async function getUserRecipes(req: Request, res: Response) {
-	const userId: number = Number(req.params.userId);
+	const { userId }: { userId: number } = res.locals.user;
 	const recipes = await recipeService.getUserRecipes(userId);
 	res.send(recipes);
 }

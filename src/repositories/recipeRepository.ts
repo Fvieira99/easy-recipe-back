@@ -13,7 +13,9 @@ async function getRecipeById(recipeId: number) {
 			},
 			id: true,
 			ratings: {
-				select: { rating: true },
+				select: {
+					rating: true,
+				},
 			},
 			title: true,
 			image: true,
@@ -44,7 +46,9 @@ async function getRecipes(skip: number) {
 			},
 			id: true,
 			ratings: {
-				select: { rating: true },
+				select: {
+					rating: true,
+				},
 			},
 			title: true,
 			image: true,
@@ -63,9 +67,12 @@ async function getUserRecipes(userId: number) {
 			},
 			id: true,
 			ratings: {
-				select: { rating: true },
+				select: {
+					rating: true,
+				},
 			},
 			title: true,
+			image: true,
 		},
 		orderBy: { createdAt: "desc" },
 		where: {

@@ -1,4 +1,9 @@
-type appErrorTypes = "conflict" | "not_found" | "unauthorized" | "wrong_schema";
+type appErrorTypes =
+	| "conflict"
+	| "not_found"
+	| "unauthorized"
+	| "wrong_schema"
+	| "bad_request";
 
 export interface AppError {
 	type: appErrorTypes;
@@ -19,4 +24,8 @@ export function unauthorizedError(message: string): AppError {
 
 export function wrongSchemaError(message: string): AppError {
 	return { type: "wrong_schema", message };
+}
+
+export function badRequestError(message: string): AppError {
+	return { type: "bad_request", message };
 }
