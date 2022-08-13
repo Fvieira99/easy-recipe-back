@@ -43,9 +43,18 @@ async function deleteRating(id: number) {
 	});
 }
 
+async function deleteRecipeRatings(recipeId: number) {
+	await prisma.rating.deleteMany({
+		where: {
+			recipeId,
+		},
+	});
+}
+
 export const ratingRepository = {
 	getRatingsByRecipeId,
 	createRating,
 	getRatingById,
 	deleteRating,
+	deleteRecipeRatings,
 };

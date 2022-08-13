@@ -62,6 +62,17 @@ async function getRecipesByTitle(req: Request, res: Response) {
 	res.send(recipes);
 }
 
+async function deleteRecipe(req: Request, res: Response) {
+	const recipeId: number = Number(req.params.recipeId);
+
+	console.log(recipeId);
+
+	const { userId }: { userId: number } = res.locals.user;
+
+	await recipeService.deleteRecipe(recipeId, userId);
+	res.sendStatus(204);
+}
+
 export const recipeController = {
 	create,
 	getRecipes,
@@ -69,4 +80,5 @@ export const recipeController = {
 	getRecipeById,
 	getRecipesQty,
 	getRecipesByTitle,
+	deleteRecipe,
 };

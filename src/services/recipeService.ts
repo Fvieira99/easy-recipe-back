@@ -2,7 +2,11 @@ import { Recipe_Ingredient } from "@prisma/client";
 import { Recipe } from "@prisma/client";
 import { ratingRepository } from "../repositories/ratingRepository.js";
 import { recipeRepository } from "../repositories/recipeRepository.js";
-import { conflictError, notFoundError } from "../utils/errorUtil.js";
+import {
+	conflictError,
+	notFoundError,
+	unauthorizedError,
+} from "../utils/errorUtil.js";
 
 export type InputRecipeData = Omit<CreateRecipeData, "userId">;
 export type CreateRecipeData = Omit<Recipe, "id" | "createdAt">;
@@ -107,6 +111,23 @@ async function createManyRecipe_Ingredient(
 	await recipeRepository.createManyRecipe_Ingredient(ingredientsWithRecipeId);
 }
 
+async function deleteRecipe(recipeId: number, userId: number) {
+	console.log(recipeId);
+	const existingRecipe = await recipeRepository.getRecipeById(recipeId);
+
+	if (!existingRecipe) {
+		throw notFoundError("Recipe does not exist!");
+	}
+
+	if (existingRecipe.user.id !== userId) {
+		throw unauthorizedError("You are not allowed to delete this recipe!");
+	}
+
+	await recipeRepository.deleteRecipes_Ingredients(recipeId);
+	await ratingRepository.deleteRecipeRatings(recipeId);
+	await recipeRepository.deleteRecipe(recipeId);
+}
+
 function calculateRatingAVG(
 	recipe: RecipesWithoutAvgRating
 ): RecipesWithAvgRating {
@@ -127,4 +148,5 @@ export const recipeService = {
 	getRecipesByTitle,
 	getRecipesQty,
 	createManyRecipe_Ingredient,
+	deleteRecipe,
 };

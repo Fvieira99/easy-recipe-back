@@ -112,6 +112,22 @@ async function getRecipesQty() {
 	return await prisma.recipe.count();
 }
 
+async function deleteRecipes_Ingredients(recipeId: number) {
+	await prisma.recipe_Ingredient.deleteMany({
+		where: {
+			recipeId,
+		},
+	});
+}
+
+async function deleteRecipe(recipeId: number) {
+	await prisma.recipe.delete({
+		where: {
+			id: recipeId,
+		},
+	});
+}
+
 export const recipeRepository = {
 	createRecipe,
 	getRecipes,
@@ -121,4 +137,6 @@ export const recipeRepository = {
 	getRecipesByTitle,
 	getRecipesQty,
 	createManyRecipe_Ingredient,
+	deleteRecipe,
+	deleteRecipes_Ingredients,
 };
