@@ -26,6 +26,7 @@ async function signup(data: CreateUserData) {
 
 async function signin(data: LoginUserData) {
 	const existingUser = await userRepository.findByEmail(data.email);
+
 	if (
 		!existingUser ||
 		!isCorrectPassword(data.password, existingUser.password)
@@ -50,8 +51,9 @@ function encryptPassword(password: string) {
 function generateToken(id: number) {
 	const JWT_DATA = { userId: id };
 	const JWT_KEY = process.env.JWT_SECRET;
+	const JWT_CONFIG = { expiresIn: "1 day" };
 
-	return jwt.sign(JWT_DATA, JWT_KEY);
+	return jwt.sign(JWT_DATA, JWT_KEY, JWT_CONFIG);
 }
 
 function isCorrectPassword(inputPassword: string, userPassword: string) {
