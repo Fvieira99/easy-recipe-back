@@ -26,7 +26,10 @@ async function main() {
 		{ name: "cenoura" },
 	];
 
-	await prisma.ingredient.createMany({ data: ingredients });
+	await prisma.ingredient.createMany({
+		data: ingredients,
+		skipDuplicates: true,
+	});
 }
 
 main()
