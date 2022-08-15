@@ -2,6 +2,7 @@ import { Recipe_Ingredient } from "@prisma/client";
 import { Recipe } from "@prisma/client";
 import { ratingRepository } from "../repositories/ratingRepository.js";
 import { recipeRepository } from "../repositories/recipeRepository.js";
+
 import {
 	conflictError,
 	notFoundError,
@@ -17,7 +18,7 @@ export type InputRecipe_IngredientData = Omit<
 	"recipeId"
 >;
 
-interface RecipesWithoutAvgRating {
+export interface RecipesWithoutAvgRating {
 	ratings: {
 		rating: number;
 	}[];
@@ -29,7 +30,7 @@ interface RecipesWithoutAvgRating {
 	};
 }
 
-interface RecipesWithAvgRating {
+export interface RecipesWithAvgRating {
 	ratings: { ratingAVG: number; ratingsCount: number };
 	id: number;
 	user: {
@@ -101,7 +102,9 @@ async function createManyRecipe_Ingredient(
 	recipeId: number,
 	ingredients: InputRecipe_IngredientData[]
 ) {
-	const ingredientsWithRecipeId = ingredients.map((ingredient) => {
+	const filteredIngredients = filterRepeatedIngredients(ingredients);
+
+	const ingredientsWithRecipeId = filteredIngredients.map((ingredient) => {
 		return {
 			...ingredient,
 			recipeId,
@@ -112,7 +115,6 @@ async function createManyRecipe_Ingredient(
 }
 
 async function deleteRecipe(recipeId: number, userId: number) {
-	console.log(recipeId);
 	const existingRecipe = await recipeRepository.getRecipeById(recipeId);
 
 	if (!existingRecipe) {
@@ -138,6 +140,25 @@ function calculateRatingAVG(
 		...recipe,
 		ratings: { ratingAVG: AVG, ratingsCount: ratingsCount },
 	};
+}
+
+function filterRepeatedIngredients(ingredients: InputRecipe_IngredientData[]) {
+	const hash = {};
+
+	ingredients.forEach((ingredient) => {
+		if (!hash[ingredient.ingredientId]) {
+			hash[ingredient.ingredientId] = ingredient.ingredientQty;
+		}
+	});
+
+	const hashEntries = Object.entries(hash);
+	const filteredIngredients = hashEntries.map((entry) => {
+		return {
+			ingredientId: Number(entry[0]),
+			ingredientQty: String(entry[1]),
+		};
+	});
+	return filteredIngredients;
 }
 
 export const recipeService = {

@@ -7,7 +7,7 @@ import { conflictError, unauthorizedError } from "../utils/errorUtil.js";
 
 dotenv.config();
 
-export type CreateUserData = Omit<User, "id" | "createAt">;
+export type CreateUserData = Omit<User, "id" | "createdAt">;
 export type LoginUserData = Omit<CreateUserData, "username" | "avatar">;
 
 async function signup(data: CreateUserData) {
