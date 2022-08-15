@@ -6,14 +6,14 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc",
-		"start": "prisma migrate deploy && prisma db seed && node dist/src/server.js",
+		"start": "prisma migrate deploy && node dist/src/server.js",
 		"dev": "nodemon src/server.ts",
 		"test:unit": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -- -i --coverage --testPathPattern=tests/unit",
 		"dev:test": "dotenv -e .env.test nodemon src/server.ts",
 		"test": "dotenv -e .env.test prisma migrate dev && cross-env NODE_OPTIONS=--experimental-vm-modules dotenv -e .ent.test jest -- -i --testPathPattern=tests/integration"
 	},
 	"prisma": {
-		"seed": " node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts"
+		"seed": "ts-node prisma/seed.ts"
 	},
 	"keywords": [],
 	"author": "",
